@@ -14,6 +14,7 @@ library(googleVis)
 library(leaflet)
 page = read_html('http://votaunicamp.herokuapp.com/results/', encoding='UTF-8')
 tbl = html_table(page)[[2]]
+names(tbl)=c("Curso","Total","Sim","Não","Abstenções")
 head(tbl)
 ```
 
@@ -37,6 +38,85 @@ mytbl$curso = gsub("(Mes|Dou).+ em (.*)$", "\\2", mytbl$curso)
 head(mytbl)
 ```
 
+
+##Divisão das áreas
+```{r}
+
+IMECC = c(1,2,28,29,51,31,79)
+FEM = c(10,49,98,60,92,72,39)
+FCA = c(100,107,101,102,33,54,91,52)
+IFGW = c(4,108,40,54)
+IFCH = c(19,30,44,16,28,25,66,94,74,69,103,27,36,37,75,24,80,38)
+FEEC = c(11,41,34,61)
+FEC = c(12,32,62,89)
+FOP = c(14,16,73,20,19,64,18,67,23,71,70,69)
+FEA = c(13,43,81,34,6,7,5,47,56,57,55)
+FCM = c(15,21,58,89,8,75,97,23,104,90,87,36,91,100,49,58,35,42,74,51,50,44,90,48,59)
+IE = c(17,47,21,67,53)
+IEL = c(7,57,18,75,68,93,57,81,40)
+IA = c(26,25,64,23,22,105,106,2,22,83,65,61,60,63,62)
+FEF =c(27,45,78,28)
+IC= c(42,53,3,35)
+FEQ = c(39,9,59)
+IB = c(6,46,101,14,10,9,12,13,11)
+IQ = c(5,50,55)
+IG = c(53,54,55,26,76,24,95,79,41)
+FEAGRI = c(8,58)
+FE = c(20,38,70,102,86)
+PROFIS = c(200)
+  
+EXATAS = c(IMECC,FEM,IFGW,FEEC,FEC,FEA,IQ,FEAGRI,IC,FEQ)
+BIOLOGICAS = c(FCM,FOP,IB,FEF)
+HUMANAS = c(IFCH,IE,IEL,FE)
+ARTES = c(IA)
+OUTROS = c(PROFIS)
+
+for( i in 1:219){
+  if(mytbl$nivel[i]==Mestrado){
+    if(mytbl$codigo[i]==EXATAS)
+      area=exatas
+    if(mytbl$codigo[i]==BIOLOGICAS)
+      area=biologicas
+    if(mytbl$codigo[i]==HUMANAS)
+      area=humanas
+    if(mytbl$codigo[i]==ARTES)
+      area=artes
+    if(mytbl$codigo[i]==OUTROS)
+      area=outros
+  }
+   
+  if(mytbl$nivel[i]==Doutorado){
+    if(mytbl$codigo[i]==EXATAS)
+      area=exatas
+    if(mytbl$codigo[i]==BIOLOGICAS)
+      area=biologicas
+    if(mytbl$codigo[i]==HUMANAS)
+      area=humanas
+    if(mytbl$codigo[i]==ARTES)
+      area=artes
+    if(mytbl$codigo[i]==OUTROS)
+      area=outros
+    
+  }
+  
+  if(mytbl$nivel[i]==Graduacao){
+    if(mytbl$codigo[i]==EXATAS)
+      area=exatas
+    if(mytbl$codigo[i]==BIOLOGICAS)
+      area=biologicas
+    if(mytbl$codigo[i]==HUMANAS)
+      area=humanas
+    if(mytbl$codigo[i]==ARTES)
+      area=artes
+    if(mytbl$codigo[i]==OUTROS)
+      area=outros
+    
+  }
+  
+}
+
+```
+
 ## Gauge Plots
 
 ```{r plot_gauge}
@@ -58,10 +138,11 @@ Obter localizações (lat/lon) por meio do OpenStreet Maps:
 - Olhar o endereço na barra de endereço após o zoom
 - Atualizar o data.frame abaixo com as informações
 
-```{r enderecos}
-ends = data.frame(instituto=c('IMECC', 'FEM', 'FEF'),
-           lat=c(-22.81583,-22.81938,-22.81476),
-           lon=c(-47.06769,-47.06592,-47.07333))
+```{r enderecos,  echo=FALSE}
+ends = data.frame(instituto=c('IMECC', 'FEM', 'FEF', 'IA' , 'IEL' , 'IFCH' , 'IFGW', 'IQ' , 'IB' , 'FEEC' , 'FEQ' , 'FE' , 'IE' , 'IC' , 'FEC' , 'FEAGRI' , 'FCM', 'IG' , 'FEA'),
+           lat=c(-22.81583,-22.81938,-22.81476,-22.815127,-22.815121,-22.814924,-22.816778,-22.818993,-22.819333,-22.821286,-22.820336,-22.816466, -22.814952,-22.814663,-22.816503,-22.819405,-22.831345,-22.813084,-22.820475),
+           lon=c(-47.06769,-47.06592,-47.07333,-47.070112,-47.069397,-47.068303,-47.067328,-47.068038,-47.069402,-47.065894,-47.065617,-47.065728,-47.066153,-47.064811,-47.061943,-47.060955,-47.062188,-47.068574,-47.067189))
+
 map = leaflet()
 map = addTiles(map)
 map = addCircleMarkers(map, lat=ends$lat, lng=ends$lon, popup = ends$instituto)
